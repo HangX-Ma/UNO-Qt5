@@ -39,6 +39,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED
         Network
         Core
         Gui
+        Multimedia
     )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED 
     COMPONENTS 
@@ -46,26 +47,34 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED
         Network
         Core
         Gui
+        Multimedia
     )
 
 # user determined build option
 option(WITH_QRC "build project with .qrc file" OFF)
 if (WITH_QRC)
-    set(QRC_SOURCE_FILES UNO2D.qrc)
+    set(QRC_SOURCE_FILES UNORes.qrc)
     qt5_add_resources(QRC_FILES ${QRC_SOURCE_FILES})
     source_group("Resources Files" FILES ${QRC_SOURCE_FILES})
 else()
     set(QRC_FILES)
 endif()
 
-# find the source files
-file(GLOB_RECURSE CURRENT_DIR_HEADERS ${CMAKE_SOURCE_DIR}/include/*.h)
-file(GLOB CURRENT_DIR_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+
+set(FRONT_END_HEADERS_ROOT_DIR ${CMAKE_SOURCE_DIR}/front-end/include)
+set(FRONT_END_SOURCES_ROOT_DIR ${CMAKE_SOURCE_DIR}/front-end/src)
+
+# find the necessary files
+file(GLOB_RECURSE FRONT_DIR_HEADERS 
+    ${FRONT_END_HEADERS_ROOT_DIR}/*.h
+    ${FRONT_END_HEADERS_ROOT_DIR}/*.hpp)
+file(GLOB FRONT_DIR_SOURCES 
+    ${FRONT_END_SOURCES_ROOT_DIR}/*.cpp)
 
 add_executable(UNO 
-    ${CURRENT_DIR_SOURCES} 
+    ${FRONT_DIR_SOURCES} 
     ${QRC_FILES} 
-    ${CURRENT_DIR_HEADERS}
+    ${FRONT_DIR_HEADERS}
     )
 
 target_link_libraries(UNO 
@@ -74,12 +83,13 @@ target_link_libraries(UNO
         Qt${QT_VERSION_MAJOR}::Network
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Multimedia
     )
 
 target_include_directories(UNO 
     PRIVATE
         ${CMAKE_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/front-end/include
         $ENV{QTDIR}/5.15.2/gcc_64/include
     )
 
