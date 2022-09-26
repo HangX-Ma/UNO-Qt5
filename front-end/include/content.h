@@ -1,7 +1,7 @@
 /**
- * @file settingwindow.h
+ * @file newButton.h
  * @author HangX-Ma (m-contour@qq.com)
- * @brief UNO setting Window
+ * @brief UNO card content enum
  * @version 0.1
  * @date 2022-09-24
  * @copyright Copyright (c) 2022 HangX-Ma
@@ -19,24 +19,13 @@
  * limitations under the License.
  */
 
-#ifndef SETTINGWINDOW_H
-#define SETTINGWINDOW_H
+#ifndef CONTENT_H
+#define CONTENT_H
 
-#include <QtWidgets/QMainWindow>
-
-
-class SettingWindow : public QMainWindow 
-{
-    Q_OBJECT;
-
-public:
-    SettingWindow(QWidget *parent = nullptr);
-    ~SettingWindow();
-
-signals:
-  // back to caller
-  void SIG_setting_win_back();
-};
-
+typedef enum {
+    NUM0, NUM1, NUM2, NUM3, NUM4,
+    NUM5, NUM6, NUM7, NUM8, NUM9,
+    DRAW2, SKIP, REV, WILD, WILD_DRAW4
+} Content;
 
 #endif

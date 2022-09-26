@@ -25,12 +25,12 @@
 #include <QtWidgets/QPushButton>
 #include <QtCore/QPropertyAnimation>
 
-class newButton : public QPushButton
+class NewButton : public QPushButton
 {
     Q_OBJECT
 
 public:
-    inline newButton(QString name, int btnW, int btnH) {
+    inline NewButton(QString name, int btnW, int btnH) {
         this->setText(name);
         this->setObjectName("btn_" + name);
         this->setStyleSheet("QPushButton{color: white; border:none;}"
@@ -38,7 +38,7 @@ public:
                             "QPushButton::pressed{color: #BDB76B; border:none;}");
         this->setFixedSize(btnW, btnH);
     }
-    inline ~newButton() {};
+    inline ~NewButton() {};
 
     // animation
     inline void btnPressed() {

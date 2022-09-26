@@ -27,24 +27,36 @@
 #include "settingwindow.h"
 #include "gamewindow.h"
 
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(int argc, char* argv[], QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
     GameWindow* m_GameWinPtr = nullptr;
     SettingWindow* m_SettingWinPtr = nullptr;
+    
+    QImage m_Screen;
+    QPainter* m_Painter;
+
+    QImage m_bg_welcome; //!< welcome image
+    QImage m_bg_back;    //!< uno card back image
+
+
+    void refreshScreen();
 
 protected:
     /* Rewrite paint event to draw background */
     void paintEvent(QPaintEvent *);
     /* turn to different state */
     void mousePressEvent(QMouseEvent* event);
+
+signals:
+  // back to caller
+  void SIG_game_win_open();
 
 };
 

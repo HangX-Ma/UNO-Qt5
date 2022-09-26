@@ -1,7 +1,7 @@
 /**
- * @file settingwindow.h
+ * @file newButton.h
  * @author HangX-Ma (m-contour@qq.com)
- * @brief UNO setting Window
+ * @brief UNO card color enum
  * @version 0.1
  * @date 2022-09-24
  * @copyright Copyright (c) 2022 HangX-Ma
@@ -19,24 +19,11 @@
  * limitations under the License.
  */
 
-#ifndef SETTINGWINDOW_H
-#define SETTINGWINDOW_H
+#ifndef COLOR_H
+#define COLOR_H
 
-#include <QtWidgets/QMainWindow>
-
-
-class SettingWindow : public QMainWindow 
-{
-    Q_OBJECT;
-
-public:
-    SettingWindow(QWidget *parent = nullptr);
-    ~SettingWindow();
-
-signals:
-  // back to caller
-  void SIG_setting_win_back();
-};
-
+typedef enum {
+    NONE, RED, BLUE, GREEN, YELLOW
+} Color;
 
 #endif

@@ -89,7 +89,7 @@ target_link_libraries(UNO
 target_include_directories(UNO 
     PRIVATE
         ${CMAKE_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}/front-end/include
+        ${FRONT_END_HEADERS_ROOT_DIR}
         $ENV{QTDIR}/5.15.2/gcc_64/include
     )
 
