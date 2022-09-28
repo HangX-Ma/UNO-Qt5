@@ -32,6 +32,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
+
 # find fundamental components
 find_package(QT NAMES Qt6 Qt5 REQUIRED 
     COMPONENTS 

@@ -19,13 +19,14 @@
  * limitations under the License.
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef __MAINWINDOW_H__
+#define __MAINWINDOW_H__
 
 #include <QtWidgets/QMainWindow>
 
 #include "settingwindow.h"
 #include "gamewindow.h"
+#include "info.h"
 
 class MainWindow : public QMainWindow
 {
@@ -40,11 +41,12 @@ private:
     SettingWindow* m_SettingWinPtr = nullptr;
     
     QImage m_Screen;
-    QPainter* m_Painter;
+    QPainter* m_PainterPtr = nullptr;
 
     QImage m_bg_welcome; //!< welcome image
     QImage m_bg_back;    //!< uno card back image
 
+    Info* m_InfoPtr = nullptr;
 
     void refreshScreen();
 

@@ -20,22 +20,19 @@
  */
 
 
-#ifndef UNO_H
-#define UNO_H
-
+#ifndef __UNO_H__
+#define __UNO_H__
 
 #include "color.h"
 #include "content.h"
 #include "card.h"
 #include "player.h"
 
+
 constexpr int DIR_LEFT = 1; //!< Direction value (clockwise).
 constexpr int DIR_RIGHT = 3; //!< Direction value (counter-clockwise).
 
-class Player;
-
 class UNO {
-    Q_OBJECT
 
 public:
     /**
@@ -94,7 +91,7 @@ public:
      *              Pass the specified following legal color.
      * @return Reference of the played card.
      */
-    inline Card* play(int who, int index, Color color);
+    Card* play(int who, int index, Color color);
 
 
     /**
@@ -107,7 +104,7 @@ public:
      * @return Tell the challenge result, true if challenge success,
      *         or false if challenge failure.
      */
-    inline bool challenge(int whom);
+    bool challenge(int whom);
 
     /**
      * @brief In 7-0 rule, when someone put down a seven card, then the player must
@@ -119,13 +116,13 @@ public:
      *          Player::YOU, Player::COM1, Player::COM2, Player::COM3.
      *          Cannot exchange with yourself.
      */
-    inline void swap(int a, int b);
+    void swap(int a, int b);
 
     /**
      * @brief In 7-0 rule, when a zero card is put down, everyone need to pass the hand
      * cards to the next player.
      */
-    inline void cycle();
+    void cycle();
 
     /**
      * @return How many legal cards (the cards that can be played legally)

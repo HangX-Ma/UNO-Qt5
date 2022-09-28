@@ -19,8 +19,8 @@
  * limitations under the License.
  */
 
-#ifndef NEWBUTTON_H
-#define NEWBUTTON_H
+#ifndef __NEWBUTTON_H__
+#define __NEWBUTTON_H__
 
 #include <QtWidgets/QPushButton>
 #include <QtCore/QPropertyAnimation>

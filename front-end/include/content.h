@@ -19,8 +19,8 @@
  * limitations under the License.
  */
 
-#ifndef CONTENT_H
-#define CONTENT_H
+#ifndef __CONTENT_H__
+#define __CONTENT_H__
 
 typedef enum {
     NUM0, NUM1, NUM2, NUM3, NUM4,

@@ -19,8 +19,8 @@
  * limitations under the License.
  */
 
-#ifndef SETTINGWINDOW_H
-#define SETTINGWINDOW_H
+#ifndef __SETTINGWINDOW_H__
+#define __SETTINGWINDOW_H__
 
 #include <QtWidgets/QMainWindow>
 

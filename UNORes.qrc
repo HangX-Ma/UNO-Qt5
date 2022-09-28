@@ -125,5 +125,10 @@
         <file>UNORes/front_rS.png</file>
         <file>UNORes/front_yF.png</file>
         <file>UNORes/front_yS.png</file>
+        <file>UNORes/snd_draw.wav</file>
+        <file>UNORes/snd_lose.wav</file>
+        <file>UNORes/snd_play.wav</file>
+        <file>UNORes/snd_uno.wav</file>
+        <file>UNORes/snd_win.wav</file>
     </qresource>
 </RCC>

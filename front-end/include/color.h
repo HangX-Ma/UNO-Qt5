@@ -19,8 +19,8 @@
  * limitations under the License.
  */
 
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef __COLOR_H__
+#define __COLOR_H__
 
 typedef enum {
     NONE, RED, BLUE, GREEN, YELLOW

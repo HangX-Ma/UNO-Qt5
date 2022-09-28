@@ -1,5 +1,5 @@
-#ifndef CARD_H
-#define CARD_H
+#ifndef __CARD_H__
+#define __CARD_H__
 
 
 #include <QtGui/QImage>
@@ -123,10 +123,10 @@ private:
      */
     inline Card(QImage normalImg, QImage darkImg, Color color, Content content) :
         color(color),
-        normalImg(normalImg),
-        darkImg(darkImg),
         content(content),
         name(A(color) + B(content)),
+        normalImg(normalImg),
+        darkImg(darkImg),
         id(isWild() ? 39 + content : 13 * (color - 1) + content) {
     }
 

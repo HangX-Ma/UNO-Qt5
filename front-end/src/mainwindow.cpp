@@ -19,6 +19,9 @@ static const QPen PEN_YELLOW(QColor(0xFF, 0xAA, 0x11));
 
 MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
     : QMainWindow(parent) {
+    
+    QString message;
+    int font_width;
 
     if (this->objectName().isEmpty()) {
         this->setObjectName(QString::fromUtf8("MainWindow"));
@@ -26,17 +29,25 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
 
     /* Main windows property */
     setFixedSize(1280,720);
-    setWindowIcon(QIcon("UNORes/icon_128x128.ico"));
-    setWindowTitle("UNO");
+    setWindowIcon(QIcon(":/UNORes/icon_128x128.ico"));
+    setWindowTitle("UNO Welcome");
 
     m_Screen = QImage(1280, 720, QImage::Format_RGB888);
-    m_Painter = new QPainter(&m_Screen);
+    m_PainterPtr = new QPainter(&m_Screen);
 
     m_bg_welcome.load(":/UNORes/bg_welcome.png");
     m_bg_back.load(":/UNORes/back.png");
-    m_Painter->drawImage(0, 0, m_bg_welcome);
-    m_Painter->drawImage(580, 270, m_bg_back);
+    m_PainterPtr->drawImage(0, 0, m_bg_welcome);
+    m_PainterPtr->drawImage(580, 270, m_bg_back);
 
+    /* draw message */
+    QPen PEN_WHITE(QColor(0xCC, 0xCC, 0xCC));
+    m_PainterPtr->setFont(QFont("Arial", 18, QFont::Bold));
+    m_PainterPtr->setPen(PEN_WHITE);
+    message = m_InfoPtr->info_welcome();
+    font_width = m_PainterPtr->fontMetrics().horizontalAdvance(message);
+    m_PainterPtr->drawText(650 - font_width / 2, 487, message);
+    
     /* SETTING button */
     NewButton *btnSetting = new NewButton("SETTING", 100, 50);
     btnSetting->setParent(this);
@@ -46,8 +57,8 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
     /* EXIT button */
 
     m_SettingWinPtr = new SettingWindow();
-    m_GameWinPtr = new GameWindow();
-
+    m_GameWinPtr = new GameWindow(argc, argv, m_InfoPtr);
+    m_InfoPtr = Info::getInstance();
 
     connect(m_SettingWinPtr, &SettingWindow::SIG_setting_win_back, this, [=]()
     {
@@ -73,6 +84,7 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
         QTimer::singleShot(100,this,[=](){
             this->hide();
             m_GameWinPtr->show();
+            m_GameWinPtr->updateStatus(STAT_NEW_GAME);
         });
     });
     
