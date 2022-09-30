@@ -32,40 +32,55 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
     setWindowIcon(QIcon(":/UNORes/icon_128x128.ico"));
     setWindowTitle("UNO Welcome");
 
-    m_Screen = QImage(1280, 720, QImage::Format_RGB888);
-    m_PainterPtr = new QPainter(&m_Screen);
+    m_screen = QImage(1280, 720, QImage::Format_RGB888);
+    m_painterPtr = new QPainter(&m_screen);
 
     m_bg_welcome.load(":/UNORes/bg_welcome.png");
     m_bg_back.load(":/UNORes/back.png");
-    m_PainterPtr->drawImage(0, 0, m_bg_welcome);
-    m_PainterPtr->drawImage(580, 270, m_bg_back);
+    m_painterPtr->drawImage(0, 0, m_bg_welcome);
+    m_painterPtr->drawImage(580, 270, m_bg_back);
 
     /* draw message */
     QPen PEN_WHITE(QColor(0xCC, 0xCC, 0xCC));
-    m_PainterPtr->setFont(QFont("Arial", 18, QFont::Bold));
-    m_PainterPtr->setPen(PEN_WHITE);
-    message = m_InfoPtr->info_welcome();
-    font_width = m_PainterPtr->fontMetrics().horizontalAdvance(message);
-    m_PainterPtr->drawText(650 - font_width / 2, 487, message);
+    m_painterPtr->setFont(QFont("Arial", 18, QFont::Bold));
+    m_painterPtr->setPen(PEN_WHITE);
+    message = m_infoPtr->info_welcome();
+    font_width = m_painterPtr->fontMetrics().horizontalAdvance(message);
+    m_painterPtr->drawText(650 - font_width / 2, 487, message);
     
     /* SETTING button */
-    NewButton *btnSetting = new NewButton("SETTING", 100, 50);
+    NewButton *btnSetting = new NewButton("SETTING", 120, 60);
     btnSetting->setParent(this);
     btnSetting->move(20, 650);
-    btnSetting->setFont(QFont("Arial", 16, QFont::Bold));
+    btnSetting->setFont(QFont("Arial", 18, QFont::ExtraBold));
 
     /* EXIT button */
 
-    m_SettingWinPtr = new SettingWindow();
-    m_GameWinPtr = new GameWindow(argc, argv, m_InfoPtr);
-    m_InfoPtr = Info::getInstance();
 
-    connect(m_SettingWinPtr, &SettingWindow::SIG_setting_win_back, this, [=]()
+    m_settingWinPtr = new SettingWindow(argc, argv, m_infoPtr);
+    m_gameWinPtr = new GameWindow(argc, argv, m_infoPtr);
+    m_infoPtr = Info::getInstance();
+
+    connect(m_settingWinPtr, &SettingWindow::SIG_setting_win_back, this, [=]()
     {
         qDebug() << "return from setting window";
-        m_SettingWinPtr->hide();
+        m_settingWinPtr->hide();
         this->show();
     });
+
+
+    connect(m_gameWinPtr, &GameWindow::SIG_enter_setting, this, [=]()
+    {
+        qDebug() << "enter setting window";
+        btnSetting->btnPressed();
+        btnSetting->btnReleased();
+        QTimer::singleShot(100,this,[=](){
+            m_gameWinPtr->hide();
+            m_settingWinPtr->show();
+            m_settingWinPtr->start();
+        });
+    });
+
 
     connect(btnSetting, &NewButton::clicked, [=]()
     {
@@ -74,7 +89,8 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
         btnSetting->btnReleased();
         QTimer::singleShot(100,this,[=](){
             this->hide();
-            m_SettingWinPtr->show();
+            m_settingWinPtr->show();
+            m_settingWinPtr->start();
         });
     });
 
@@ -83,8 +99,8 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
         qDebug() << "enter game window";
         QTimer::singleShot(100,this,[=](){
             this->hide();
-            m_GameWinPtr->show();
-            m_GameWinPtr->updateStatus(STAT_NEW_GAME);
+            m_gameWinPtr->show();
+            m_gameWinPtr->start();
         });
     });
     
@@ -110,7 +126,7 @@ void MainWindow::paintEvent(QPaintEvent *) {
 
     roi.setWidth(this->width());
     roi.setHeight(this->height());
-    QPainter(this).drawImage(roi, m_Screen);
+    QPainter(this).drawImage(roi, m_screen);
 }
 
 

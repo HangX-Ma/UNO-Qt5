@@ -23,19 +23,38 @@
 #define __SETTINGWINDOW_H__
 
 #include <QtWidgets/QMainWindow>
-
+#include "info.h"
+#include "uno.h"
+#include "sound.h"
+#include "newbutton.h"
 
 class SettingWindow : public QMainWindow 
 {
     Q_OBJECT;
 
 public:
-    SettingWindow(QWidget *parent = nullptr);
+    SettingWindow(int argc, char* argv[], Info* info, QWidget *parent = nullptr);
     ~SettingWindow();
 
+    void start();
+
+private:
+    QImage m_screen;
+    
+    UNO* m_unoPtr;
+    Sound* m_sndPtr;
+    Info* m_infoPtr;
+    QPainter* m_painterPtr;
+    
+    void refreshScreen(const QString& message = "");
+
+protected:
+    void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent* event);
+
 signals:
-  // back to caller
-  void SIG_setting_win_back();
+    // back to caller
+    void SIG_setting_win_back();
 };
 
 

@@ -37,16 +37,16 @@ public:
     ~MainWindow();
 
 private:
-    GameWindow* m_GameWinPtr = nullptr;
-    SettingWindow* m_SettingWinPtr = nullptr;
+    GameWindow* m_gameWinPtr = nullptr;
+    SettingWindow* m_settingWinPtr = nullptr;
     
-    QImage m_Screen;
-    QPainter* m_PainterPtr = nullptr;
+    QImage m_screen;
+    QPainter* m_painterPtr = nullptr;
 
     QImage m_bg_welcome; //!< welcome image
     QImage m_bg_back;    //!< uno card back image
 
-    Info* m_InfoPtr = nullptr;
+    Info* m_infoPtr = nullptr;
 
     void refreshScreen();
 

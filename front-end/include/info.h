@@ -132,9 +132,8 @@ public:
         return "Direction changed";
     }
 
-    inline QString info_gameOver(int i) {
-        return "Your score is " + QString::number(i)
-            + ". Click the card deck to restart";
+    inline QString info_gameOver() {
+        return "Game Over. Click the card deck to restart";
     }
 
     inline QString info_ready() {

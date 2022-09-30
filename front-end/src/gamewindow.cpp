@@ -1,4 +1,5 @@
 #include "gamewindow.h"
+#include "newbutton.h"
 
 #include <QtGui/QPen>
 #include <QtGui/QMouseEvent>
@@ -18,7 +19,7 @@ static const QBrush BRUSH_GREEN(QColor(0x55, 0xAA, 0x55));
 static const QBrush BRUSH_YELLOW(QColor(0xFF, 0xAA, 0x11));
 
 GameWindow::GameWindow(int argc, char* argv[], Info* info, QWidget *parent)
-    : m_unoPtr(nullptr), m_infoPtr(info), m_soundPtr(nullptr), m_AI_Ptr(nullptr), m_PainterPtr(nullptr) {
+    : m_unoPtr(nullptr), m_infoPtr(info), m_soundPtr(nullptr), m_AI_Ptr(nullptr), m_painterPtr(nullptr) {
     if (argc > 1) {
         unsigned seed = unsigned(atoi(argv[1]));
         m_unoPtr = UNO::getInstance(seed);
@@ -27,7 +28,7 @@ GameWindow::GameWindow(int argc, char* argv[], Info* info, QWidget *parent)
         m_unoPtr = UNO::getInstance();
     }
     
-    m_soundPtr = new Sound;
+    m_soundPtr = Sound::getInstance();
     m_AI_Ptr = AI::getInstance();
 
     /* Game windows property */
@@ -45,13 +46,43 @@ GameWindow::GameWindow(int argc, char* argv[], Info* info, QWidget *parent)
         m_bkPainterList[i] = new QPainter(&m_backup[i]);
     }
     m_screen = QImage(1280, 720, QImage::Format_RGB888);
-    m_PainterPtr = new QPainter(&m_screen);
-    m_PainterPtr->setPen(PEN_WHITE);
-    m_PainterPtr->setFont(QFont("Arial", 20));
+    m_painterPtr = new QPainter(&m_screen);
+    m_painterPtr->setPen(PEN_WHITE);
+    m_painterPtr->setFont(QFont("Arial", 20));
+
+    /* SETTING button */
+    NewButton *btnSetting = new NewButton("SETTING", 120, 60);
+    btnSetting->setParent(this);
+    btnSetting->move(20, 650);
+    btnSetting->setFont(QFont("Arial", 18, QFont::ExtraBold));
+
+    connect(this, &GameWindow::SIG_new_game, btnSetting, [=]()
+    {
+        btnSetting->setVisible(false);
+    });
+
+
+    connect(this, &GameWindow::SIG_game_over, btnSetting, [=]()
+    {
+        btnSetting->setVisible(true);
+    });
+
+
+    connect(btnSetting, &NewButton::clicked, this, [=]()
+    {
+        emit SIG_enter_setting();
+    });
+
 }
 
 GameWindow::~GameWindow() {
     ; // Empty
+}
+
+
+void GameWindow::start() {
+    emit SIG_new_game();
+    this->updateStatus(STAT_NEW_GAME);
 }
 
 
@@ -566,7 +597,8 @@ void GameWindow::updateStatus(int status) {
         break; // case Player::COM1, Player::COM2, Player::COM3
 
     case STAT_GAME_OVER:
-        threadWait(5000);
+        refreshScreen(m_infoPtr->info_gameOver());
+        emit SIG_game_over();
         break; // case STAT_GAME_OVER
 
     default:
@@ -583,11 +615,11 @@ void GameWindow::refreshScreen(const QString& message = "") {
     status = m_status;
 
     // Clear previous background
-    m_PainterPtr->drawImage(0, 0, m_unoPtr->getBackgroundImage());
+    m_painterPtr->drawImage(0, 0, m_unoPtr->getBackgroundImage());
 
     // Message area
-    int width = m_PainterPtr->fontMetrics().horizontalAdvance(message);
-    m_PainterPtr->drawText(640 - width / 2, 487, message);
+    int width = m_painterPtr->fontMetrics().horizontalAdvance(message);
+    m_painterPtr->drawText(640 - width / 2, 487, message);
 
     this->showDeckRecent();
     this->showRemainUsed();
@@ -595,10 +627,10 @@ void GameWindow::refreshScreen(const QString& message = "") {
     /* -------- Left-center: Hand cards of Player West (COM1) -------- */
     if (status == state::STAT_GAME_OVER && m_winner == Player::COM1) {
         // Played all hand cards, it's winner
-        m_PainterPtr->setPen(PEN_YELLOW);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("WIN");
-        m_PainterPtr->drawText(80 - width / 2, 461, "WIN");
-        m_PainterPtr->setPen(PEN_WHITE);
+        m_painterPtr->setPen(PEN_YELLOW);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("WIN");
+        m_painterPtr->drawText(80 - width / 2, 461, "WIN");
+        m_painterPtr->setPen(PEN_WHITE);
     }
     else if (((m_hideFlag >> 1) & 0x01) == 0x00) {
         Player* p = m_unoPtr->getPlayer(Player::COM1);
@@ -606,25 +638,25 @@ void GameWindow::refreshScreen(const QString& message = "") {
         size = int(hand.size());
         for (i = 0; i < size; ++i) {
             image = p->isOpen(i) ? hand.at(i)->normalImg : m_unoPtr->getBackImage();
-            m_PainterPtr->drawImage(20, 290 - 20 * size + 40 * i, image);
+            m_painterPtr->drawImage(20, 290 - 20 * size + 40 * i, image);
         }
 
         if (size == 1) {
             // Show "UNO" warning when only one card in hand
-            m_PainterPtr->setPen(PEN_YELLOW);
-            width = m_PainterPtr->fontMetrics().horizontalAdvance("UNO");
-            m_PainterPtr->drawText(80 - width / 2, 494, "UNO");
-            m_PainterPtr->setPen(PEN_WHITE);
+            m_painterPtr->setPen(PEN_YELLOW);
+            width = m_painterPtr->fontMetrics().horizontalAdvance("UNO");
+            m_painterPtr->drawText(80 - width / 2, 494, "UNO");
+            m_painterPtr->setPen(PEN_WHITE);
         }
     }
 
     /* -------- Top-center: Hand cards of Player North (COM2) -------- */
     if (status == STAT_GAME_OVER && m_winner == Player::COM2) {
         // Played all hand cards, it's winner
-        m_PainterPtr->setPen(PEN_YELLOW);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("WIN");
-        m_PainterPtr->drawText(640 - width / 2, 121, "WIN");
-        m_PainterPtr->setPen(PEN_WHITE);
+        m_painterPtr->setPen(PEN_YELLOW);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("WIN");
+        m_painterPtr->drawText(640 - width / 2, 121, "WIN");
+        m_painterPtr->setPen(PEN_WHITE);
     }
     else if (((m_hideFlag >> 2) & 0x01) == 0x00) {
         Player* p = m_unoPtr->getPlayer(Player::COM2);
@@ -632,25 +664,25 @@ void GameWindow::refreshScreen(const QString& message = "") {
         size = int(hand.size());
         for (i = 0; i < size; ++i) {
             image = p->isOpen(i) ? hand.at(i)->normalImg : m_unoPtr->getBackImage();
-            m_PainterPtr->drawImage((1205 - 45 * size + 90 * i) / 2, 20, image);
+            m_painterPtr->drawImage((1205 - 45 * size + 90 * i) / 2, 20, image);
         }
 
         if (size == 1) {
             // Show "UNO" warning when only one card in hand
-            m_PainterPtr->setPen(PEN_YELLOW);
-            width = m_PainterPtr->fontMetrics().horizontalAdvance("UNO");
-            m_PainterPtr->drawText(560 - width, 121, "UNO");
-            m_PainterPtr->setPen(PEN_WHITE);
+            m_painterPtr->setPen(PEN_YELLOW);
+            width = m_painterPtr->fontMetrics().horizontalAdvance("UNO");
+            m_painterPtr->drawText(560 - width, 121, "UNO");
+            m_painterPtr->setPen(PEN_WHITE);
         }
     }
 
     /* -------- Right-center: Hand cards of Player East (COM3) -------- */
     if (status == STAT_GAME_OVER && m_winner == Player::COM3) {
         // Played all hand cards, it's winner
-        m_PainterPtr->setPen(PEN_YELLOW);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("WIN");
-        m_PainterPtr->drawText(1200 - width / 2, 461, "WIN");
-        m_PainterPtr->setPen(PEN_WHITE);
+        m_painterPtr->setPen(PEN_YELLOW);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("WIN");
+        m_painterPtr->drawText(1200 - width / 2, 461, "WIN");
+        m_painterPtr->setPen(PEN_WHITE);
     }
     else if (((m_hideFlag >> 3) & 0x01) == 0x00) {
         Player* p = m_unoPtr->getPlayer(Player::COM3);
@@ -658,25 +690,25 @@ void GameWindow::refreshScreen(const QString& message = "") {
         size = int(hand.size());
         for (i = 0; i < size; ++i) {
             image = p->isOpen(i) ? hand.at(i)->normalImg : m_unoPtr->getBackImage();
-            m_PainterPtr->drawImage(1140, 290 - 20 * size + 40 * i, image);
+            m_painterPtr->drawImage(1140, 290 - 20 * size + 40 * i, image);
         }
 
         if (size == 1) {
             // Show "UNO" warning when only one card in hand
-            m_PainterPtr->setPen(PEN_YELLOW);
-            width = m_PainterPtr->fontMetrics().horizontalAdvance("UNO");
-            m_PainterPtr->drawText(1200 - width / 2, 494, "UNO");
-            m_PainterPtr->setPen(PEN_WHITE);
+            m_painterPtr->setPen(PEN_YELLOW);
+            width = m_painterPtr->fontMetrics().horizontalAdvance("UNO");
+            m_painterPtr->drawText(1200 - width / 2, 494, "UNO");
+            m_painterPtr->setPen(PEN_WHITE);
         }
     }
 
     /* -------- Bottom: Your hand cards -------- */
     if (status == STAT_GAME_OVER && m_winner == Player::YOU) {
         // Played all hand cards, it's winner
-        m_PainterPtr->setPen(PEN_YELLOW);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("WIN");
-        m_PainterPtr->drawText(640 - width / 2, 621, "WIN");
-        m_PainterPtr->setPen(PEN_WHITE);
+        m_painterPtr->setPen(PEN_YELLOW);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("WIN");
+        m_painterPtr->drawText(640 - width / 2, 621, "WIN");
+        m_painterPtr->setPen(PEN_WHITE);
     }
     else if ((m_hideFlag & 0x01) == 0x00) {
         // Show your all hand cards
@@ -688,7 +720,7 @@ void GameWindow::refreshScreen(const QString& message = "") {
                 || (status == Player::YOU
                     && m_unoPtr->isLegalToPlay(card))
                 ? card->normalImg : card->darkImg;
-            m_PainterPtr->drawImage(
+            m_painterPtr->drawImage(
                 /* x     */ (1205 - 45 * size + 90 * i) / 2,
                 /* y     */ i == m_selectedIndex ? 500 : 520,
                 /* image */ image
@@ -697,9 +729,9 @@ void GameWindow::refreshScreen(const QString& message = "") {
 
         if (size == 1) {
             // Show "UNO" warning when only one card in hand
-            m_PainterPtr->setPen(PEN_YELLOW);
-            m_PainterPtr->drawText(720, 621, "UNO");
-            m_PainterPtr->setPen(PEN_WHITE);
+            m_painterPtr->setPen(PEN_YELLOW);
+            m_painterPtr->drawText(720, 621, "UNO");
+            m_painterPtr->setPen(PEN_WHITE);
         }
     }
 
@@ -709,68 +741,68 @@ void GameWindow::refreshScreen(const QString& message = "") {
         // Need to specify the following legal color after played a
         // wild card. Draw color sectors in the center of screen
         // Draw blue sector
-        m_PainterPtr->setPen(Qt::NoPen);
-        m_PainterPtr->setBrush(BRUSH_BLUE);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 0, 90 * 16);
+        m_painterPtr->setPen(Qt::NoPen);
+        m_painterPtr->setBrush(BRUSH_BLUE);
+        m_painterPtr->drawPie(270, 180, 271, 271, 0, 90 * 16);
 
         // Draw green sector
-        m_PainterPtr->setBrush(BRUSH_GREEN);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 0, -90 * 16);
+        m_painterPtr->setBrush(BRUSH_GREEN);
+        m_painterPtr->drawPie(270, 180, 271, 271, 0, -90 * 16);
 
         // Draw red sector
-        m_PainterPtr->setBrush(BRUSH_RED);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 180 * 16, -90 * 16);
+        m_painterPtr->setBrush(BRUSH_RED);
+        m_painterPtr->drawPie(270, 180, 271, 271, 180 * 16, -90 * 16);
 
         // Draw yellow sector
-        m_PainterPtr->setBrush(BRUSH_YELLOW);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 180 * 16, 90 * 16);
-        m_PainterPtr->setPen(PEN_WHITE);
+        m_painterPtr->setBrush(BRUSH_YELLOW);
+        m_painterPtr->drawPie(270, 180, 271, 271, 180 * 16, 90 * 16);
+        m_painterPtr->setPen(PEN_WHITE);
         break;
     
     case STAT_DOUBT_WILD4:
         // Ask whether you want to challenge your previous player
         // Draw YES button
-        m_PainterPtr->setPen(Qt::NoPen);
-        m_PainterPtr->setBrush(BRUSH_GREEN);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 0, 180 * 16);
-        m_PainterPtr->setPen(PEN_WHITE);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance(m_infoPtr->label_yes());
-        m_PainterPtr->drawText(405 - width / 2, 268, m_infoPtr->label_yes());
+        m_painterPtr->setPen(Qt::NoPen);
+        m_painterPtr->setBrush(BRUSH_GREEN);
+        m_painterPtr->drawPie(270, 180, 271, 271, 0, 180 * 16);
+        m_painterPtr->setPen(PEN_WHITE);
+        width = m_painterPtr->fontMetrics().horizontalAdvance(m_infoPtr->label_yes());
+        m_painterPtr->drawText(405 - width / 2, 268, m_infoPtr->label_yes());
 
         // Draw NO button
-        m_PainterPtr->setPen(Qt::NoPen);
-        m_PainterPtr->setBrush(BRUSH_RED);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 0, -180 * 16);
-        m_PainterPtr->setPen(PEN_WHITE);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance(m_infoPtr->label_no());
-        m_PainterPtr->drawText(405 - width / 2, 382, m_infoPtr->label_no());
+        m_painterPtr->setPen(Qt::NoPen);
+        m_painterPtr->setBrush(BRUSH_RED);
+        m_painterPtr->drawPie(270, 180, 271, 271, 0, -180 * 16);
+        m_painterPtr->setPen(PEN_WHITE);
+        width = m_painterPtr->fontMetrics().horizontalAdvance(m_infoPtr->label_no());
+        m_painterPtr->drawText(405 - width / 2, 382, m_infoPtr->label_no());
         break;
 
     case STAT_SEVEN_TARGET:
         // Ask the target you want to swap hand cards with
         // Draw west sector (red)
-        m_PainterPtr->setPen(Qt::NoPen);
-        m_PainterPtr->setBrush(BRUSH_RED);
-        m_PainterPtr->drawPie(270, 180, 271, 271, -90 * 16, -120 * 16);
-        m_PainterPtr->setPen(PEN_WHITE);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("W");
-        m_PainterPtr->drawText(338 - width / 2, 350, "W");
+        m_painterPtr->setPen(Qt::NoPen);
+        m_painterPtr->setBrush(BRUSH_RED);
+        m_painterPtr->drawPie(270, 180, 271, 271, -90 * 16, -120 * 16);
+        m_painterPtr->setPen(PEN_WHITE);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("W");
+        m_painterPtr->drawText(338 - width / 2, 350, "W");
 
         // Draw east sector (green)
-        m_PainterPtr->setPen(Qt::NoPen);
-        m_PainterPtr->setBrush(BRUSH_GREEN);
-        m_PainterPtr->drawPie(270, 180, 271, 271, -90 * 16, 120 * 16);
-        m_PainterPtr->setPen(PEN_WHITE);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("E");
-        m_PainterPtr->drawText(472 - width / 2, 350, "E");
+        m_painterPtr->setPen(Qt::NoPen);
+        m_painterPtr->setBrush(BRUSH_GREEN);
+        m_painterPtr->drawPie(270, 180, 271, 271, -90 * 16, 120 * 16);
+        m_painterPtr->setPen(PEN_WHITE);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("E");
+        m_painterPtr->drawText(472 - width / 2, 350, "E");
 
         // Draw north sector (yellow)
-        m_PainterPtr->setPen(Qt::NoPen);
-        m_PainterPtr->setBrush(BRUSH_YELLOW);
-        m_PainterPtr->drawPie(270, 180, 271, 271, 150 * 16, -120 * 16);
-        m_PainterPtr->setPen(PEN_WHITE);
-        width = m_PainterPtr->fontMetrics().horizontalAdvance("N");
-        m_PainterPtr->drawText(405 - width / 2, 270, "N");
+        m_painterPtr->setPen(Qt::NoPen);
+        m_painterPtr->setBrush(BRUSH_YELLOW);
+        m_painterPtr->drawPie(270, 180, 271, 271, 150 * 16, -120 * 16);
+        m_painterPtr->setPen(PEN_WHITE);
+        width = m_painterPtr->fontMetrics().horizontalAdvance("N");
+        m_painterPtr->drawText(405 - width / 2, 270, "N");
         break;
 
     default:
@@ -789,7 +821,7 @@ void GameWindow::showDeckRecent() {
     int width = 45 * size + 75;
     QImage image = m_unoPtr->getBackImage();
 
-    m_PainterPtr->drawImage(338, 270, image);
+    m_painterPtr->drawImage(338, 270, image);
     for (int i = 0; i < size; ++i) {
         if (recent.at(i)->content == WILD) {
             image = m_unoPtr->getColoredWildImage(recentColors.at(i));
@@ -800,7 +832,7 @@ void GameWindow::showDeckRecent() {
         else {
             image = recent.at(i)->normalImg;
         }
-        m_PainterPtr->drawImage(792 - width / 2 + 45 * i, 270, image);
+        m_painterPtr->drawImage(792 - width / 2 + 45 * i, 270, image);
     }
 }
 
@@ -810,7 +842,7 @@ void GameWindow::showRemainUsed() {
     int remain = m_unoPtr->getDeckCount();
     int used = m_unoPtr->getUsedCount();
     QString info = m_infoPtr->label_remain_used(remain, used);
-    m_PainterPtr->drawText(20, 42, info);
+    m_painterPtr->drawText(20, 42, info);
 }
 
 
@@ -830,7 +862,7 @@ void GameWindow::animate(int layerCount, AnimateLayer layer[]) {
 
         for (j = 0; j < layerCount; ++j) {
             AnimateLayer& l = layer[j];
-            m_PainterPtr->drawImage(
+            m_painterPtr->drawImage(
                 /* x     */ l.startLeft + (l.endLeft - l.startLeft) * i / 5,
                 /* y     */ l.startTop + (l.endTop - l.startTop) * i / 5,
                 /* image */ l.elem
@@ -845,7 +877,7 @@ void GameWindow::animate(int layerCount, AnimateLayer layer[]) {
             roi.setY(l.startTop + (l.endTop - l.startTop) * i / 5);
             roi.setWidth(l.elem.width());
             roi.setHeight(l.elem.height());
-            m_PainterPtr->drawImage(roi, m_backup[j], roi);
+            m_painterPtr->drawImage(roi, m_backup[j], roi);
         }
     }
 }

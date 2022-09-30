@@ -20,13 +20,6 @@ private:
     QSoundEffect* sndDraw;
     QSoundEffect* sndPlay;
 
-public:
-    static const int SND_UNO = 0;
-    static const int SND_WIN = 1;
-    static const int SND_LOSE = 2;
-    static const int SND_DRAW = 3;
-    static const int SND_PLAY = 4;
-
     Sound(QObject* = nullptr) {
         sndUno = new QSoundEffect;
         sndWin = new QSoundEffect;
@@ -52,8 +45,27 @@ public:
         connect(this, SIGNAL(playSndDraw()), sndDraw, SLOT(play()));
         connect(this, SIGNAL(playSndPlay()), sndPlay, SLOT(play()));
 
+        connect(&thread, &QThread::finished, this, &QObject::deleteLater);
+        
         enabled = true;
         thread.start();
+    }
+
+    ~Sound() {
+        thread.quit();
+        thread.wait();
+    }
+
+public:
+    static const int SND_UNO = 0;
+    static const int SND_WIN = 1;
+    static const int SND_LOSE = 2;
+    static const int SND_DRAW = 3;
+    static const int SND_PLAY = 4;
+
+    static Sound* getInstance() {
+        static Sound instance;
+        return &instance;
     }
 
     inline void setEnabled(bool enabled) {

@@ -42,7 +42,7 @@ public:
 
 
     /**
-     * @return Reference of our singleton.
+     * @return Reference of our meyers singleton.
      */
     inline static UNO* getInstance(unsigned int seed = 0U) {
         static UNO instance(seed);

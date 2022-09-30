@@ -32,20 +32,20 @@ class AnimateLayer;
 
 class GameWindow : public QMainWindow 
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     GameWindow(int argc, char* argv[], Info* info, QWidget *parent = nullptr);
     ~GameWindow();
 
-    void updateStatus(int status);
+    void start();
 
 private:
     UNO* m_unoPtr;
     Info* m_infoPtr;
     Sound* m_soundPtr;
     AI* m_AI_Ptr;
-    QPainter* m_PainterPtr;
+    QPainter* m_painterPtr;
     QPainter* m_bkPainterList[4];
 
     QImage m_screen;
@@ -112,6 +112,7 @@ private:
 
     void refreshScreen(const QString& message);
     void animate(int layerCount, AnimateLayer layer[]);
+    void updateStatus(int status);
 
     /* used in refreshScreen */
     void showDeckRecent();
@@ -124,6 +125,11 @@ protected:
     // Implemented Listeners
     void paintEvent(QPaintEvent* event);
     void mousePressEvent(QMouseEvent* event);
+
+signals:
+    void SIG_game_over();
+    void SIG_new_game();
+    void SIG_enter_setting();
 };
 
 
