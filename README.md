@@ -28,14 +28,22 @@ Add the following commands in `CMakeLists.txt`.
 set(ENV{QTDIR} "Where you install Qt")
 ```
 
-
-
 ### Build Project
 If you want to generate Doxygen file, `DBUILD_DOCUMENTATION` needs to be set `True`. You will find `index.html` in `build/docs/html` directory.
 ```shell
 cd UNO-Qt5 && mkdir build
 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_DOCUMENTATION=True -B build -S .
 cmake --build build
+```
+
+#### Build Information
+```shell
+-- Build Type: Release
+-- QTDIR: /home/user/Qt
+-- Build documentation open
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/user/Desktop/UNO-Qt5/build
 ```
 
 ## Game Rules
