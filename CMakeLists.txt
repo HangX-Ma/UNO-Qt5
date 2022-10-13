@@ -97,7 +97,7 @@ target_include_directories(UNO
     PRIVATE
         ${CMAKE_SOURCE_DIR}
         ${FRONT_END_HEADERS_ROOT_DIR}
-        $ENV{QTDIR}/5.15.2/gcc_64/include
+        $ENV{QTDIR}/${QT_VERSION}/gcc_64/include
     )
 
 set_target_properties(UNO 
