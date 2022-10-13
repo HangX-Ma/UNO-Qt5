@@ -37,23 +37,23 @@ public:
     ~MainWindow();
 
 private:
-    GameWindow* m_gameWinPtr = nullptr;
-    SettingWindow* m_settingWinPtr = nullptr;
+    GameWindow* m_gameWinPtr = nullptr; //!< singleton game window pointer
+    SettingWindow* m_settingWinPtr = nullptr; //!< singleton setting window pointer
     
-    QImage m_screen;
+    QImage m_screen; //!< screen image
     QPainter* m_painterPtr = nullptr;
 
     QImage m_bg_welcome; //!< welcome image
     QImage m_bg_back;    //!< uno card back image
 
-    Info* m_infoPtr = nullptr;
+    Info* m_infoPtr = nullptr; //!< singleton game info pointer
 
     void refreshScreen();
 
 protected:
     /* Rewrite paint event to draw background */
     void paintEvent(QPaintEvent *);
-    /* turn to different state */
+    /* turn to different state after mouse press */
     void mousePressEvent(QMouseEvent* event);
 
 signals:

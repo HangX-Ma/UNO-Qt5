@@ -98,3 +98,7 @@ set_target_properties(UNO
     PROPERTIES
         WIN32_EXECUTABLE TRUE
     )
+
+message(STATUS "Build documentation open")
+include(${CMAKE_CURRENT_LIST_DIR}/cmake-modules/build_doxygen.cmake)
+build_doxygen()

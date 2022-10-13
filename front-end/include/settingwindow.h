@@ -39,12 +39,12 @@ public:
     void start();
 
 private:
-    QImage m_screen;
+    QImage m_screen; //!< screen image
     
-    UNO* m_unoPtr;
-    Sound* m_sndPtr;
-    Info* m_infoPtr;
-    QPainter* m_painterPtr;
+    UNO* m_unoPtr; //!< UNO game rules
+    Sound* m_sndPtr; //!< singleton sound pointer
+    Info* m_infoPtr; //!< singleton game info pointer
+    QPainter* m_painterPtr; 
     
     void refreshScreen(const QString& message = "");
 

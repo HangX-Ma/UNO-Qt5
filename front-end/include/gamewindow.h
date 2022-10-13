@@ -50,13 +50,13 @@ private:
 
     QImage m_screen;
     QImage m_backup[4];
-    int m_status;
+    int m_status; //!< game status
 
 
-    bool m_isAIRunning;
-    int m_winner;
-    int m_selectedIndex;
-    int m_hideFlag;
+    bool m_isAIRunning; //!< if AI is running flag
+    int m_winner; //!< game winner
+    int m_selectedIndex; //!< selected card index
+    int m_hideFlag; //!< which cards need to be hidden (binary search)
 
     /**
      * @brief The local event loop will block the thread until it is returned.
@@ -115,8 +115,8 @@ private:
     void updateStatus(int status);
 
     /* used in refreshScreen */
-    void showDeckRecent();
-    void showRemainUsed();
+    void showDeckRecent(); //!< show recently played card
+    void showRemainUsed(); //!< show card deck info
 
     void hardAI();
     void sevenZeroAI();

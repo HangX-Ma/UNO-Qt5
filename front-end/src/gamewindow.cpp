@@ -999,6 +999,7 @@ void GameWindow::mousePressEvent(QMouseEvent* event) {
             if (270 <= y && y <= 450) {
                 if (338 <= x && x <= 458) {
                     // Card deck area, start a new game
+                    emit SIG_new_game();
                     updateStatus(STAT_NEW_GAME);
                 }
             }
