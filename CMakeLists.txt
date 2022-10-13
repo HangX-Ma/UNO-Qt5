@@ -33,6 +33,12 @@ endif()
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
 
+if(DEFINED ENV{QTDIR})
+    message(STATUS "QTDIR: $ENV{QTDIR}")
+else()
+    message(FATAL_ERROR "NO DEFINED QTDIR VARIABLES")
+endif()
+
 # find fundamental components
 find_package(QT NAMES Qt6 Qt5 REQUIRED 
     COMPONENTS 

@@ -8,6 +8,29 @@ UNO card game based on Qt5. Original Repository is here [shiawasenahikari/UnoCar
 
 
 ## Usage
+
+### Environment Setting
+
+**Linux**
+```shell
+sudo vim ~/.bashrc
+```
+Add following two commands in `.bashrc`.
+```shell
+# replace user_name with your own user; Qt directory is where you install Qt
+export QTDIR=/home/user_name/Qt
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$QTDIR/5.15.2/gcc_64/lib
+```
+
+**WIN**
+Add the following commands in `CMakeLists.txt`.
+```cmake
+set(ENV{QTDIR} "Where you install Qt")
+```
+
+
+
+### Build Project
 If you want to generate Doxygen file, `DBUILD_DOCUMENTATION` needs to be set `True`. You will find `index.html` in `build/docs/html` directory.
 ```shell
 cd UNO-Qt5 && mkdir build
