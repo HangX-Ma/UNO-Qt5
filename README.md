@@ -22,10 +22,24 @@ export QTDIR=/home/user_name/Qt
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$QTDIR/5.15.2/gcc_64/lib
 ```
 
-**WIN**
-Add the following commands in `CMakeLists.txt`.
-```cmake
-set(ENV{QTDIR} "Where you install Qt")
+**Cross Compile For WIN64** (currently failed with `ld` segmentation fault)
+Make sure you install `mingw64` toolchain on linux.
+```shell
+sudo apt-get install mingw-w64
+# transfer to -posix toolchain
+sudo update-alternatives --config x86_64-w64-mingw32-gcc
+sudo update-alternatives --config x86_64-w64-mingw32-g++
+sudo update-alternatives --config x86_64-w64-mingw32-gfortran
+sudo update-alternatives --config x86_64-w64-mingw32-gnat
+
+sudo update-alternatives --config i686-w64-mingw32-gcc
+sudo update-alternatives --config i686-w64-mingw32-g++
+sudo update-alternatives --config i686-w64-mingw32-gfortran
+sudo update-alternatives --config i686-w64-mingw32-gnat
+```
+
+```shell
+cmake -B build -S . -DCROSS_COMPILE_WIN64=True -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=windows.toolchain.cmake
 ```
 
 ### Build Project
