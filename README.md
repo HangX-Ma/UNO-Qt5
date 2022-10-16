@@ -33,6 +33,26 @@ As soon as `UNO.exe` generated, packed it using `windeployqt.exe`. But if you in
 windeployqt.exe UNO.exe
 ```
 
+**Cross Compile For WIN64** (currently failed with `ld` segmentation fault)
+Make sure you install `mingw64` toolchain on linux.
+```shell
+sudo apt-get install mingw-w64
+# transfer to -posix toolchain
+sudo update-alternatives --config x86_64-w64-mingw32-gcc
+sudo update-alternatives --config x86_64-w64-mingw32-g++
+sudo update-alternatives --config x86_64-w64-mingw32-gfortran
+sudo update-alternatives --config x86_64-w64-mingw32-gnat
+
+sudo update-alternatives --config i686-w64-mingw32-gcc
+sudo update-alternatives --config i686-w64-mingw32-g++
+sudo update-alternatives --config i686-w64-mingw32-gfortran
+sudo update-alternatives --config i686-w64-mingw32-gnat
+```
+
+```shell
+cmake -B build -S . -DCROSS_COMPILE_WIN64=True -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=windows.toolchain.cmake
+```
+
 ### Build Project
 If you want to generate Doxygen file, `DBUILD_DOCUMENTATION` needs to be set `True`. You will find `index.html` in `build/docs/html` directory.
 ```shell
