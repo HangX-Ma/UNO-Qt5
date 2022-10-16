@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(UNO VERSION 0.1 LANGUAGES CXX)
 
+# win
 set(CMAKE_C_COMPILER "C:/Qt/Tools/mingw810_64/bin/gcc.exe")
 set(CMAKE_CXX_COMPILER "C:/Qt/Tools/mingw810_64/bin/g++.exe")
 set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/mingw81_64")
@@ -17,7 +18,7 @@ set(CMAKE_AUTORCC ON)
 # determine the language standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall -O2 -fPIC")
+set(CMAKE_CXX_FLAGS "-Wall -O2 -g -fPIC")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
@@ -38,8 +39,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
-<<<<<<< HEAD
-=======
 option(CROSS_COMPILE_WIN64 "build exe file for win64" OFF)
 if(CROSS_COMPILE_WIN64)
     # if you want to compile for win10 
@@ -117,14 +116,7 @@ if(CROSS_COMPILE_WIN64)
 
 endif()
 
-# Qt checker
-if(DEFINED ENV{QTDIR})
-    message(STATUS "QTDIR: $ENV{QTDIR}")
-else()
-    message(FATAL_ERROR "NO DEFINED QTDIR VARIABLES")
-endif()
 
->>>>>>> 7df235f2b153ad83851184bd60bf1e5223516bbc
 # find fundamental components
 find_package(QT NAMES Qt6 Qt5 REQUIRED
     COMPONENTS 
