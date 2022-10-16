@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.5)
 
 project(UNO VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_C_COMPILER "C:/Qt/Tools/mingw810_64/bin/gcc.exe")
+set(CMAKE_CXX_COMPILER "C:/Qt/Tools/mingw810_64/bin/g++.exe")
+set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/mingw81_64")
+set(QT_DIR "${CMAKE_PREFIX_PATH}/lib/cmake/Qt5")
+set(Qt5_DIR "${CMAKE_PREFIX_PATH}/lib/cmake/Qt5")
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -9,7 +15,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 # determine the language standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-Wall -O2 -g -fPIC")
 
@@ -32,15 +38,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
-
-if(DEFINED ENV{QTDIR})
-    message(STATUS "QTDIR: $ENV{QTDIR}")
-else()
-    message(FATAL_ERROR "NO DEFINED QTDIR VARIABLES")
-endif()
-
 # find fundamental components
-find_package(QT NAMES Qt6 Qt5 REQUIRED 
+find_package(QT NAMES Qt6 Qt5 REQUIRED
     COMPONENTS 
         Widgets
         Network
@@ -48,7 +47,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED
         Gui
         Multimedia
     )
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED 
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED
     COMPONENTS 
         Widgets
         Network
@@ -58,7 +57,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED
     )
 
 # user determined build option
-option(WITH_QRC "build project with .qrc file" OFF)
+option(WITH_QRC "build project with .qrc file" ON)
 if (WITH_QRC)
     set(QRC_SOURCE_FILES UNORes.qrc)
     qt5_add_resources(QRC_FILES ${QRC_SOURCE_FILES})
@@ -97,7 +96,6 @@ target_include_directories(UNO
     PRIVATE
         ${CMAKE_SOURCE_DIR}
         ${FRONT_END_HEADERS_ROOT_DIR}
-        $ENV{QTDIR}/${QT_VERSION}/gcc_64/include
     )
 
 set_target_properties(UNO 

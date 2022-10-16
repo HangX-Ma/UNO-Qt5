@@ -25,7 +25,12 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$QTDIR/5.15.2/gcc_64/lib
 **WIN**
 Add the following commands in `CMakeLists.txt`.
 ```cmake
-set(ENV{QTDIR} "Where you install Qt")
+set(CMAKE_PREFIX_PATH "your_path/Qt5/5.15.2/mingw81_64")
+set(Qt_DIR "your_path/Qt5/5.15.2/mingw81_64/lib/cmake/Qt5")
+```
+As soon as `UNO.exe` generated, packed it using `windeployqt.exe`. But if you install your Qt in `C:`, you can run `.exe` file directly.
+```shell
+windeployqt.exe UNO.exe
 ```
 
 ### Build Project

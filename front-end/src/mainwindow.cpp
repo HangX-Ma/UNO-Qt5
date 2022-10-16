@@ -49,7 +49,7 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent)
     m_painterPtr->drawText(650 - font_width / 2, 487, message);
     
     /* SETTING button */
-    NewButton *btnSetting = new NewButton("SETTING", 120, 60);
+    NewButton *btnSetting = new NewButton("SETTING", 140, 60);
     btnSetting->setParent(this);
     btnSetting->move(20, 650);
     btnSetting->setFont(QFont("Arial", 18, QFont::ExtraBold));
